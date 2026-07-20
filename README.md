@@ -97,3 +97,9 @@ The live-session panel currently demonstrates booking logic. Production video me
 - **App cannot find `app.py`:** Confirm `app.py` is in the GitHub repository root and that Streamlit's main file path is exactly `app.py`.
 - **Blank or stale deployment:** Reboot the app from the Streamlit management console after dependency changes.
 - **Python incompatibility:** Redeploy with Python 3.11 or 3.12.
+
+## Acknowledgement
+
+Author: Suman Poola
+
+Mentor: Dr. Qingyang Xiao
