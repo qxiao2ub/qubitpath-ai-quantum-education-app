@@ -1,0 +1,6 @@
+learner_id,level,study_minutes_7d,lessons_completed,quiz_average,feedback_like_rate,predicted_progress_next_30d
+QP-1001,Entry,180,3,82,0.8,0.68
+QP-1002,Entry,95,2,71,0.6,0.51
+QP-2001,Intermediate,240,5,88,0.9,0.79
+QP-2002,Intermediate,150,4,76,0.7,0.63
+QP-3001,Advanced,310,7,91,0.85,0.86
