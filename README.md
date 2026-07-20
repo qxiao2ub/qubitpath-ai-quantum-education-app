@@ -98,4 +98,5 @@ The live-session panel currently demonstrates booking logic. Production video me
 ## Acknowledgement
 
 Author: Suman Poola
+
 Mentor: Dr. Qingyang Xiao
