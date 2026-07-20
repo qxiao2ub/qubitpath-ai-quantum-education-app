@@ -1,5 +1,8 @@
 # QubitPath AI
 
+**Author:** Suman Poola  
+**Mentor:** Dr. Qingyang Xiao
+
 QubitPath AI is a GitHub- and Streamlit-ready prototype for an AI-assisted quantum-computing education platform. It supports entry, intermediate, and advanced learners through structured lessons, quizzes, mini-games, quantum-circuit simulations, progress analytics, adaptive recommendations, and an AI tutor prototype.
 
 ## Main capabilities
@@ -94,9 +97,3 @@ The live-session panel currently demonstrates booking logic. Production video me
 - **App cannot find `app.py`:** Confirm `app.py` is in the GitHub repository root and that Streamlit's main file path is exactly `app.py`.
 - **Blank or stale deployment:** Reboot the app from the Streamlit management console after dependency changes.
 - **Python incompatibility:** Redeploy with Python 3.11 or 3.12.
-
-## Acknowledgement
-
-Author: Suman Poola
-
-Mentor: Dr. Qingyang Xiao

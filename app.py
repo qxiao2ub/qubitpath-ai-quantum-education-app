@@ -28,6 +28,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 APP_TITLE = "QubitPath AI"
+AUTHOR_NAME = "Suman Poola"
+MENTOR_NAME = "Dr. Qingyang Xiao"
 LEVELS = ["Entry", "Intermediate", "Advanced"]
 LEVEL_TO_NUM = {"Entry": 1, "Intermediate": 2, "Advanced": 3}
 IBM_COURSES_URL = "https://quantum.cloud.ibm.com/learning/en/courses"
@@ -68,6 +70,18 @@ st.markdown(
       section[data-testid="stSidebar"] { background:linear-gradient(180deg,#171b36,#202958); color:white; }
       section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] p { color:#f4f5ff !important; }
       section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3 { color:white; }
+      .project-credits-sidebar {
+        margin:.45rem 0 1rem; padding:.72rem .78rem; border-radius:14px;
+        background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.16);
+        line-height:1.42; font-size:.86rem;
+      }
+      .project-credits-sidebar .credit-label { color:#c9cdef; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+      .project-credits-sidebar .mentor-credit { margin-top:.52rem; padding-top:.52rem; border-top:1px solid rgba(255,255,255,.13); }
+      .project-credits-page { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin:.2rem 0 1.25rem; }
+      .credit-card { background:rgba(255,255,255,.94); border:1px solid rgba(111,75,242,.16); padding:1rem 1.1rem; border-radius:16px; box-shadow:0 7px 22px rgba(30,38,90,.06); }
+      .credit-role { color:#6043d8; font-size:.76rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.2rem; }
+      .credit-name { color:#172033; font-size:1.05rem; font-weight:750; }
+      @media (max-width:700px) { .project-credits-page { grid-template-columns:1fr; } }
       .professor { display:flex; gap:1rem; align-items:center; background:white; padding:1rem; border-radius:18px; border:1px solid #e9e7ff; }
       .avatar { width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center;
         font-size:2rem; background:linear-gradient(135deg,#6f4bf2,#13c8c8); color:white; }
@@ -529,6 +543,15 @@ progress_model, risk_model, feature_importance, dnn_training_accuracy = train_ai
 with st.sidebar:
     st.markdown("# ⚛️ QubitPath AI")
     st.caption("Adaptive quantum-computing education prototype")
+    st.markdown(
+        f"""
+        <div class="project-credits-sidebar">
+          <div><span class="credit-label">Author</span><br><strong>{AUTHOR_NAME}</strong></div>
+          <div class="mentor-credit"><span class="credit-label">Mentor</span><br><strong>{MENTOR_NAME}</strong></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     learner_name = st.text_input("Learner display name", value="Quantum Explorer")
     learner_level = st.selectbox("Current pathway", LEVELS)
     weekly_hours = st.slider("Planned study hours per week", 1.0, 12.0, 4.0, 0.5)
@@ -909,6 +932,22 @@ elif page == "Analytics":
 
 else:
     header("Responsible AI and production roadmap", "Build learner trust through transparency, privacy, accessibility, evaluation, and human oversight.")
+    st.markdown("### Project credits")
+    st.markdown(
+        f"""
+        <div class="project-credits-page">
+          <div class="credit-card">
+            <div class="credit-role">Author</div>
+            <div class="credit-name">{AUTHOR_NAME}</div>
+          </div>
+          <div class="credit-card">
+            <div class="credit-role">Mentor</div>
+            <div class="credit-name">{MENTOR_NAME}</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.markdown("### What this prototype does")
     st.markdown(
         """
