@@ -1,3 +1,7 @@
+# QubitPath AI - Streamlit application
+# Generated from the accompanying Colab prototype.
+# No API keys are required for the default demo.
+
 from __future__ import annotations
 
 import json
@@ -12,7 +16,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-import streamlit.components.v1 as components
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
 from sklearn.compose import ColumnTransformer
@@ -25,6 +28,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 APP_TITLE = "QubitPath AI"
+AUTHOR_NAME = "Suman Poola"
+MENTOR_NAME = "Dr. Qingyang Xiao"
 LEVELS = ["Entry", "Intermediate", "Advanced"]
 LEVEL_TO_NUM = {"Entry": 1, "Intermediate": 2, "Advanced": 3}
 IBM_COURSES_URL = "https://quantum.cloud.ibm.com/learning/en/courses"
@@ -34,15 +39,15 @@ st.set_page_config(
     page_title=f"{APP_TITLE} | Quantum Learning",
     page_icon="⚛️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown(
     """
     <style>
       :root { --qp-purple:#6f4bf2; --qp-cyan:#13c8c8; --qp-ink:#172033; }
-      .stApp { background: transparent; }
-      .block-container { padding-top: 0; padding-bottom: 0; max-width: 100%; padding-left: 0; padding-right: 0;}
+      .stApp { background: linear-gradient(180deg,#f8f7ff 0%,#f4fbff 100%); }
+      .block-container { padding-top: 1.2rem; padding-bottom: 3rem; max-width: 1400px; }
       .hero {
         padding: 1.45rem 1.6rem; border-radius: 24px; color: white;
         background: radial-gradient(circle at 10% 20%,#8a6cff 0,#6f4bf2 35%,#27357f 100%);
@@ -55,8 +60,6 @@ st.markdown(
         padding:1rem 1.1rem; border-radius:18px; box-shadow:0 8px 26px rgba(30,38,90,.07);
         min-height:145px;
       }
-      [data-testid="stHeader"] {
-        background: transparent;}
       .pill { display:inline-block; padding:.22rem .62rem; border-radius:999px;
         background:#eee9ff; color:#4b35b4; font-weight:700; font-size:.78rem; margin-right:.3rem; }
       .success-box { background:#ecfff7; border-left:5px solid #20a977; padding:.8rem 1rem; border-radius:12px; }
@@ -67,64 +70,21 @@ st.markdown(
       section[data-testid="stSidebar"] { background:linear-gradient(180deg,#171b36,#202958); color:white; }
       section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] p { color:#f4f5ff !important; }
       section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3 { color:white; }
+      .project-credits-sidebar {
+        margin:.45rem 0 1rem; padding:.72rem .78rem; border-radius:14px;
+        background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.16);
+        line-height:1.42; font-size:.86rem;
+      }
+      .project-credits-sidebar .credit-label { color:#c9cdef; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+      .project-credits-sidebar .mentor-credit { margin-top:.52rem; padding-top:.52rem; border-top:1px solid rgba(255,255,255,.13); }
+      .project-credits-page { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin:.2rem 0 1.25rem; }
+      .credit-card { background:rgba(255,255,255,.94); border:1px solid rgba(111,75,242,.16); padding:1rem 1.1rem; border-radius:16px; box-shadow:0 7px 22px rgba(30,38,90,.06); }
+      .credit-role { color:#6043d8; font-size:.76rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.2rem; }
+      .credit-name { color:#172033; font-size:1.05rem; font-weight:750; }
+      @media (max-width:700px) { .project-credits-page { grid-template-columns:1fr; } }
       .professor { display:flex; gap:1rem; align-items:center; background:white; padding:1rem; border-radius:18px; border:1px solid #e9e7ff; }
       .avatar { width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center;
         font-size:2rem; background:linear-gradient(135deg,#6f4bf2,#13c8c8); color:white; }
-    .hometitle {
-            color: #FFFDD0;
-            font-family: "Impact";
-            text-align: center;
-            
-            margin-top: 75vh;
-        }
-    .testhome-title {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        size: 20px;
-        font-size: 20vh;
-        justify-content: center;
-        background-color: transparent;
-        width: 100%;
-        overflow: hidden;
-    }
-    .testhome-path-options{
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-        justify-content: center;
-        align-items: center;
-        background-color: transparent;
-        max-width: 100%;
-        border-radius: 2vh;
-        gap: 3%;
-    }
-    .testhome-about{
-    height:30vh;
-    }
-    .testhome-about h4 {
-    text-align: center;
-    color:#FFFDD0;
-    size: 5vw;
-    }
-    .testhome-about h1{
-    text-align: center;
-    color:#5dcaa5;
-    size: 10vw;
-    }
-    .testhome-path{
-    flex: 1;
-    border: 5px ;
-    text-align: center;
-    max-width: 30vw;
-    border-radius: 30px;
-    height: 80vh;
-    background-color: #4fab8c;
-    }
-    .testhome-path h2{
-    color: #FFFDD0;
-    margin-top: 15px;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -312,7 +272,6 @@ TEACHING_ARMS = ["Visual analogy", "Worked example", "Guided practice", "Short k
 
 def init_state() -> None:
     defaults = {
-        "page": "Test Home",
         "completed_lessons": [],
         "quiz_history": [],
         "xp": 120,
@@ -336,7 +295,6 @@ def init_state() -> None:
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
-    
 
 
 @st.cache_resource
@@ -581,300 +539,44 @@ def header(title: str, subtitle: str) -> None:
 
 init_state()
 progress_model, risk_model, feature_importance, dnn_training_accuracy = train_ai_models()
-if st.session_state["page"] != "Test Home":
-    with st.sidebar:
-        st.markdown("# ⚛️ QubitPath AI")
-        st.caption("Adaptive quantum-computing education prototype")
-        learner_name = st.text_input("Learner display name", value="Quantum Explorer")
-        learner_level = st.selectbox("Current pathway", LEVELS)
-        weekly_hours = st.slider("Planned study hours per week", 1.0, 12.0, 4.0, 0.5)
-        math_comfort = st.slider("Math comfort", 1, 5, 3, help="1 = developing; 5 = very comfortable")
-        learner_goal = st.selectbox(
-            "Primary goal",
-            ["Understand foundations", "Build Qiskit projects", "Prepare for research", "Explore quantum careers"],
-        )
-        st.markdown("---")
-        page = st.radio(
-            "Navigate",
-            ["Home", "Recorded Learning", "Live Tutoring", "Quantum Lab", "Quiz & Games", "AI Professor", "Analytics", "Responsible AI", "Test Home"],
-        )
-        st.markdown("---")
-        completion_pct = 100 * len(st.session_state.completed_lessons) / sum(len(v) for v in CURRICULUM.values())
-        st.progress(completion_pct / 100, text=f"Overall curriculum: {completion_pct:.0f}%")
-        st.caption(f"🔥 {st.session_state.streak}-day streak · ⭐ {st.session_state.xp} XP")
-if st.session_state["page"] == "Test Home":
-    page = st.session_state["page"]
-    components.html(
-        """
-        <script>
-        (function(){
-        function startAnimation() {
-            var topDoc = window.parent.document;
-            var targetContainer = topDoc.querySelector('.testhome-title');
-            
-            // Wait for Streamlit to render the container
-            if (!targetContainer) {
-                requestAnimationFrame(startAnimation);
-                return;
-            }
 
-            // Check if already injected
-            if (targetContainer.querySelector('#blochOverlayRoot')){
-              return;
-            }
-
-            // Anchor the container so our absolute-positioned canvas stays inside it
-            targetContainer.style.position = 'relative';
-
-            var CELL = 100;
-            var COLS, ROWS, N, cellW, cellH;
-            
-            var root = topDoc.createElement('div');
-            root.id = 'blochOverlayRoot';
-            // Position it absolutely to cover ONLY the target container
-            root.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;overflow:hidden;';
-            root.innerHTML = '<canvas id="blochCanvas" style="display:block;width:100%;height:100%"></canvas>' +
-            //  '<button id="measureBtn2" style="pointer-events:auto;position:absolute;top:16px;left:50%;transform:translateX(-50%);background:#7f77dd;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:14px;cursor:pointer;z-index:2">Measure</button>';
-            
-            // Append to the flexbox, not topDoc.body
-            targetContainer.appendChild(root);
-
-            var canvas = topDoc.getElementById('blochCanvas');
-            var ctx = canvas.getContext('2d');
-            var btn = topDoc.getElementById('measureBtn2');
-
-            var spheres = [];
-
-            function buildSpheres(){
-              // Base the width and height on the container, not the window
-              canvas.width = targetContainer.clientWidth;
-              canvas.height = targetContainer.clientHeight;
-              COLS = Math.max(3, Math.round(canvas.width / CELL));
-              ROWS = Math.max(2, Math.round(canvas.height / CELL));
-              cellW = canvas.width / COLS;
-              cellH = canvas.height / ROWS;
-              N = COLS * ROWS;
-              spheres = [];
-              for (var i=0;i<N;i++){
-                spheres.push({
-                  ax: Math.random()*Math.PI*2, ay: Math.random()*Math.PI*2, az: Math.random()*Math.PI*2,
-                  wx: (Math.random()*2-1)*3.2, wy: (Math.random()*2-1)*3.2, wz: (Math.random()*2-1)*3.2,
-                  spinning: true, tweenStart: 0, tweening: false, ax0: 0, axT: 0, outcome: null, col: '#5dcaa5'
-                });
-              }
-            }
-            buildSpheres();
-            
-            // Listen for changes to the container size instead of window resizing
-            const resizeObserver = new ResizeObserver(() => buildSpheres());
-            resizeObserver.observe(targetContainer);
-
-            var ringPts = [];
-            var STEPS = 20;
-            for (var k=0;k<STEPS;k++){
-              var a = k/STEPS*Math.PI*2;
-              ringPts.push(Math.cos(a));
-              ringPts.push(Math.sin(a));
-            }
-            function rot(p, ax, ay, az){
-              var x=p[0], y=p[1], z=p[2];
-              var y1 = y*Math.cos(ax)-z*Math.sin(ax);
-              var z1 = y*Math.sin(ax)+z*Math.cos(ax);
-              var x1 = x;
-              var x2 = x1*Math.cos(ay)+z1*Math.sin(ay);
-              var z2 = -x1*Math.sin(ay)+z1*Math.cos(ay);
-              var y2 = y1;
-              var x3 = x2*Math.cos(az)-y2*Math.sin(az);
-              var y3 = x2*Math.sin(az)+y2*Math.cos(az);
-              return [x3,y3,z2];
-            }
-            function rotXY(p, ax, ay){
-              var x=p[0], y=p[1], z=p[2];
-              var y1 = y*Math.cos(ax)-z*Math.sin(ax);
-              var z1 = y*Math.sin(ax)+z*Math.cos(ax);
-              var x2 = x*Math.cos(ay)+z1*Math.sin(ay);
-              return [x2, y1];
-            }
-
-            var last = performance.now();
-            function draw(now){
-              var dt = Math.min(0.033, (now-last)/1000);
-              last = now;
-              ctx.clearRect(0,0,canvas.width,canvas.height);
-              var r = Math.min(cellW, cellH)*0.28;
-
-              for (var i=0;i<N;i++){
-                var s = spheres[i];
-                if (!s) continue;
-                if (s.spinning){
-                  s.ax += s.wx*dt; s.ay += s.wy*dt; s.az += s.wz*dt;
-                }
-                if (s.tweening){
-                  var t = Math.min(1, (now - s.tweenStart)/650);
-                  var e = 1 - Math.pow(1-t, 3);
-                  s.ax = s.ax0 + (s.axT - s.ax0)*e;
-                  if (t>=1) s.tweening = false;
-                }
-                var col = (i % COLS) + 0.5;
-                var row = Math.floor(i / COLS) + 0.5;
-                var cx = col*cellW, cy = row*cellH;
-
-                ctx.strokeStyle = 'rgba(127,119,221,0.35)';
-                ctx.lineWidth = 1.3;
-                for (var pl=0; pl<3; pl++){
-                  ctx.beginPath();
-                  for (var k=0;k<STEPS;k++){
-                    var u = ringPts[k*2], v = ringPts[k*2+1];
-                    var p3;
-                    if (pl===0) p3=[u,v,0];
-                    else if (pl===1) p3=[u,0,v];
-                    else p3=[0,u,v];
-                    var pr = rot(p3, s.ax, s.ay, s.az);
-                    var px = cx + pr[0]*r, py = cy + pr[1]*r;
-                    if (k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-                  }
-                  ctx.closePath();
-                  ctx.stroke();
-                }
-
-                var polePt = rotXY([0,0,1], s.ax, s.ay);
-                var tipx = cx + polePt[0]*r*1.15, tipy = cy + polePt[1]*r*1.15;
-                ctx.strokeStyle = s.col;
-                ctx.lineWidth = 2;
-                ctx.globalAlpha = 0.85;
-                ctx.beginPath();
-                ctx.moveTo(cx,cy);
-                ctx.lineTo(tipx,tipy);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(tipx,tipy, r*0.13, 0, Math.PI*2);
-                ctx.fillStyle = s.col;
-                ctx.fill();
-                ctx.globalAlpha = 1;
-              }
-              requestAnimationFrame(draw);
-            }
-            requestAnimationFrame(draw);
-
-            btn.addEventListener('click', function(){
-              var isReset = btn.textContent === 'Reset';
-              if (!isReset){
-                btn.disabled = true;
-                spheres.forEach(function(s, idx){
-                  setTimeout(function(){
-                    s.spinning = false;
-                    var outcome = Math.random() < 0.5 ? 0 : 1;
-                    s.outcome = outcome;
-                    s.col = outcome === 0 ? '#5dcaa5' : '#f0997b';
-                    var target = outcome === 0 ? Math.PI/2 : -Math.PI/2;
-                    var diff = target - (s.ax % (Math.PI*2));
-                    while (diff > Math.PI) diff -= Math.PI*2;
-                    while (diff < -Math.PI) diff += Math.PI*2;
-                    s.ax0 = s.ax;
-                    s.axT = s.ax + diff;
-                    s.tweenStart = performance.now();
-                    s.tweening = true;
-                  }, idx*6);
-                });
-                setTimeout(function(){ btn.disabled = false; btn.textContent = 'Reset'; }, 1500);
-              } else {
-                spheres.forEach(function(s){
-                  s.spinning = true;
-                  s.outcome = null;
-                  s.col = '#5dcaa5';
-                  s.wx=(Math.random()*2-1)*3.2; s.wy=(Math.random()*2-1)*3.2; s.wz=(Math.random()*2-1)*3.2;
-                });
-                btn.textContent = 'Measure';
-              }
-            });
-        }
-        
-        // Start the polling and initialization
-        startAnimation();
-        
-        })();
-        </script>
-        """,
-        height=0,
-    )
-
+with st.sidebar:
+    st.markdown("# ⚛️ QubitPath AI")
+    st.caption("Adaptive quantum-computing education prototype")
     st.markdown(
-        '<div class="testhome-title"> '
-        '<p class = "hometitle"><span style="color: #5dcaa5;">Qubit</span>Path</p> '
-        '</div>', unsafe_allow_html=True
-        )
-    # Scroll animation script
-    components.html(
-        """
-        <script>
-        (function() {
-            var topDoc = window.parent.document;
-            
-            function initScrollAnimation() {
-                // Target your specific text class
-                var textElement = topDoc.querySelector('.hometitle');
-                // Target Streamlit's main scrolling container
-                var scrollContainer = topDoc.querySelector('section[data-testid="stMain"]');
-                
-                // Wait for both elements to render
-                if (!textElement || !scrollContainer) {
-                    requestAnimationFrame(initScrollAnimation);
-                    return;
-                }
-
-                // Apply styles for smooth scaling
-                textElement.style.transition = 'transform 0.1s ease-out';
-                textElement.style.transformOrigin = 'center top'; 
-                textElement.style.willChange = 'transform';
-
-                // Listen to the scroll event
-                scrollContainer.addEventListener('scroll', function() {
-                    var scrollY = scrollContainer.scrollTop;
-                    
-                    // Calculate scale: starts at 1, grows as you scroll down.
-                    // The higher the divisor (e.g., 400), the slower it grows.
-                    var scale = 1 + (scrollY / 400);
-                    
-                    // Cap the maximum scale so it doesn't break the layout
-                    scale = Math.min(scale, 4.0);
-
-                    // Apply the scale
-                    textElement.style.transform = 'scale(' + scale + ')';
-                });
-            }
-            
-            initScrollAnimation();
-        })();
-        </script>
+        f"""
+        <div class="project-credits-sidebar">
+          <div><span class="credit-label">Author</span><br><strong>{AUTHOR_NAME}</strong></div>
+          <div class="mentor-credit"><span class="credit-label">Mentor</span><br><strong>{MENTOR_NAME}</strong></div>
+        </div>
         """,
-        height=0,
+        unsafe_allow_html=True,
     )
-    #st.markdown("Choose what path you wish to take")
-    #learner_name = st.text_input("Learner display name", value="Quantum Explorer")
-    #learner_level = st.selectbox("Current pathway", LEVELS)
-    #weekly_hours = st.slider("Planned study hours per week", 1.0, 12.0, 4.0, 0.5)
-    #math_comfort = st.slider("Math comfort", 1, 5, 3, help="1 = developing; 5 = very comfortable")
-    #learner_goal = st.selectbox(
-    #            "Primary goal",
-    #            ["Understand foundations", "Build Qiskit projects", "Prepare for research", "Explore quantum careers"],
-    #        )
+    learner_name = st.text_input("Learner display name", value="Quantum Explorer")
+    learner_level = st.selectbox("Current pathway", LEVELS)
+    weekly_hours = st.slider("Planned study hours per week", 1.0, 12.0, 4.0, 0.5)
+    math_comfort = st.slider("Math comfort", 1, 5, 3, help="1 = developing; 5 = very comfortable")
+    learner_goal = st.selectbox(
+        "Primary goal",
+        ["Understand foundations", "Build Qiskit projects", "Prepare for research", "Explore quantum careers"],
+    )
+    st.markdown("---")
+    page = st.radio(
+        "Navigate",
+        ["Home", "Recorded Learning", "Live Tutoring", "Quantum Lab", "Quiz & Games", "AI Professor", "Analytics", "Responsible AI"],
+    )
+    st.markdown("---")
+    completion_pct = 100 * len(st.session_state.completed_lessons) / sum(len(v) for v in CURRICULUM.values())
+    st.progress(completion_pct / 100, text=f"Overall curriculum: {completion_pct:.0f}%")
+    st.caption(f"🔥 {st.session_state.streak}-day streak · ⭐ {st.session_state.xp} XP")
 
-    st.markdown(
-        '<div class = "testhome-about"> <h4>Learn about</h4> <h1> Quantum Computing</h1></div>'
-        '<div class = "testhome-path-options">'
-        '<div class = "testhome-path"><h2>Elementary</h2></div>'
-        '<div class = "testhome-path"><h2>Intermediate </h2></div>'
-        '<div class = "testhome-path"><h2>Advanced</h2></div>'
-        '</div>',unsafe_allow_html=True
-    )
 features = learner_features(learner_level, weekly_hours, math_comfort)
 predicted_progress = float(progress_model.predict(features)[0])
 risk_probability = float(risk_model.predict_proba(features)[0, 1])
 risk_label = "Needs support" if risk_probability >= 0.58 else "On track"
 recommended = find_recommended_lesson(learner_level)
-if page == "Test Home":
-    pass
-elif page == "Home":
+
+if page == "Home":
     header("Learn quantum computing with an adaptive guide", "Structured pathways, hands-on Qiskit labs, live tutoring, and transparent AI recommendations.")
     st.markdown(f"### Welcome, {learner_name} 👋")
     c1, c2, c3, c4 = st.columns(4)
@@ -1229,7 +931,23 @@ elif page == "Analytics":
     r2.download_button("Download learner report (CSV)", csv_report, file_name="qubitpath_learner_report.csv", mime="text/csv", width="stretch")
 
 else:
-    header("Responsible AI and production roadmap", "Build learner rtrust through transparency, privacy, accessibility, evaluation, and human oversight.")
+    header("Responsible AI and production roadmap", "Build learner trust through transparency, privacy, accessibility, evaluation, and human oversight.")
+    st.markdown("### Project credits")
+    st.markdown(
+        f"""
+        <div class="project-credits-page">
+          <div class="credit-card">
+            <div class="credit-role">Author</div>
+            <div class="credit-name">{AUTHOR_NAME}</div>
+          </div>
+          <div class="credit-card">
+            <div class="credit-role">Mentor</div>
+            <div class="credit-name">{MENTOR_NAME}</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.markdown("### What this prototype does")
     st.markdown(
         """
