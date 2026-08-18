@@ -7,6 +7,7 @@ QubitPath AI is a GitHub- and Streamlit-ready prototype for an AI-assisted quant
 
 ## Main capabilities
 
+- Animated full-screen landing UI with Bloch-sphere background and pathway entry buttons
 - Three learning levels: Entry, Intermediate, and Advanced
 - Recorded-learning curriculum and curated references
 - Prototype live-tutoring reservation workflow
@@ -37,6 +38,10 @@ qubitpath-ai-quantum-education/
 └── sample_data/
     └── learner_progress_example.csv
 ```
+
+## New landing UI
+
+The repository integrates the supplied `app_1.py` visual design into the production Streamlit entry point `app.py`. The app opens on an animated QubitPath landing screen. Choose Elementary, Intermediate, or Advanced to enter the learning platform; the sidebar remains available on the learning pages and includes a **Landing** navigation item to return to the animated home screen.
 
 ## Run locally
 
@@ -97,9 +102,3 @@ The live-session panel currently demonstrates booking logic. Production video me
 - **App cannot find `app.py`:** Confirm `app.py` is in the GitHub repository root and that Streamlit's main file path is exactly `app.py`.
 - **Blank or stale deployment:** Reboot the app from the Streamlit management console after dependency changes.
 - **Python incompatibility:** Redeploy with Python 3.11 or 3.12.
-
-## Acknowledgement
-
-Author: Suman Poola
-
-Mentor: Dr. Qingyang Xiao
